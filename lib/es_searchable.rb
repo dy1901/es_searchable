@@ -3,7 +3,7 @@ require "es_searchable/version"
 module EsSearchable
   extend ActiveSupport::Concern
 
-  SearchMethods = [:where, :like, :limit, :offset, :or, :not, :select]
+  SearchMethods = [:where, :like, :limit, :offset, :or, :not, :select, :and]
 
 	DEFAULTS = { 
 		log: true,
@@ -50,7 +50,7 @@ module EsSearchable
       end
 
 			def handle_es_response(es_coll)
-				es_coll
+				es_coll.response
 			end
 
       def client

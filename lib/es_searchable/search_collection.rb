@@ -60,7 +60,6 @@ module EsSearchable
 
 		def load_json
 			load_data
-			self
 		end
 
 		def each(&block)
@@ -77,6 +76,10 @@ module EsSearchable
 			super
 		end
 
+		def search_params
+			conditions
+		end
+
 		private
 
 		def load_data
@@ -89,6 +92,7 @@ module EsSearchable
 					i[conditions[:fields].present? ? "fields" : "_source"]
 				end
 			end
+			@response
 		end
 
 		def conditions
