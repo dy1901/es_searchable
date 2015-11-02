@@ -54,10 +54,7 @@ module EsSearchable
 			end
 
       def client
-        @client ||= Elasticsearch::Client.new(
-					log: true, 
-					hosts: [ { host: 'myhost1', port: 8080 }, { host: 'myhost2', port: 8080 } ]
-				)
+        @client ||= Elasticsearch::Client.new(EsSearchable.options)
       end
 
       def es_search(conditions)
