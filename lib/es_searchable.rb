@@ -3,7 +3,7 @@ require "es_searchable/version"
 module EsSearchable
   extend ActiveSupport::Concern
 
-  SearchMethods = [:where, :like, :limit, :offset, :or, :not]
+  SearchMethods = [:where, :like, :limit, :offset, :or, :not, :select]
 
   included do
     if self < ActiveRecord::Base

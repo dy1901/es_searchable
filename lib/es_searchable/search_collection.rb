@@ -25,20 +25,25 @@ module EsSearchable
 		end
 
 		alias_method :where, :and
-			alias_method :es_and, :and
+		alias_method :es_and, :and
 
-			def like(params)
-				store_conditions(:query, :must, params.map { |k, v| {match: { k => v }} })
-				self.clone
+		def like(params)
+			store_conditions(:query, :must, params.map { |k, v| {match: { k => v }} })
+			self.clone
+		end
+
+		def select(*attrs)
+			conditions.merge!(fields: attrs)
+			self.clone
 		end
 
 		def limit(limit)
-			conditions[:size] = limit
+			@limit = conditions[:size] = limit
 			self.clone
 		end
 
 		def offset(offset)
-			conditions[:from] = offset
+			@offset = conditions[:from] = offset
 			self.clone
 		end
 
@@ -49,13 +54,13 @@ module EsSearchable
 		attr_reader :collections, :response, :count, :time
 
 		def load
-			@response = @klass.es_search(conditions)
-			if @response.is_a?(Hash)
-				@time = @response["took"]
-				@count = @response["hits"]["total"]
-				@collections = @response["hits"]["hits"].map {|i| i["_source"]}
-			end
+			load_data
 			@klass.handle_es_response(self)
+		end
+
+		def load_json
+			load_data
+			self
 		end
 
 		def each(&block)
@@ -73,6 +78,18 @@ module EsSearchable
 		end
 
 		private
+
+		def load_data
+			@response = @klass.es_search(conditions)
+			if @response.is_a?(Hash)
+				@time = @response["took"]
+				@count = @response["hits"]["total"]
+
+				@collections = @response["hits"]["hits"].map do |i| 
+					i[conditions[:fields].present? ? "fields" : "_source"]
+				end
+			end
+		end
 
 		def conditions
 			@conditions ||= Hash.new { |h,k| h[k] = Hash.new(&h.default_proc) }
