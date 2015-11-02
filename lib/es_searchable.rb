@@ -5,7 +5,39 @@ module EsSearchable
 
   SearchMethods = [:where, :like, :limit, :offset, :or, :not, :select]
 
-  included do
+	DEFAULTS = { 
+		log: true,
+		retry_on_failure: 5, 
+		reload_on_failure: true, 
+		hosts: ['localhost:9200'], 
+		logger: Logger.new($stdout), 
+	}
+
+	class << self
+		def configure
+			yield self
+		end
+
+		def options
+			@options ||= DEFAULTS.dup
+		end
+
+		def options=(opts)
+			@options = opts
+		end
+	end
+
+	DEFAULTS.each do |k, v|
+		self.define_singleton_method "#{k}=" do |value|
+			self.options.merge!(k => value)
+		end
+
+		self.define_singleton_method k do
+			self.options[k]
+		end
+	end
+
+	included do
     if self < ActiveRecord::Base
       include Elasticsearch::Model, Elasticsearch::Model::Callbacks
     end
@@ -22,7 +54,10 @@ module EsSearchable
 			end
 
       def client
-        @client ||= Elasticsearch::Client.new log: true
+        @client ||= Elasticsearch::Client.new(
+					log: true, 
+					hosts: [ { host: 'myhost1', port: 8080 }, { host: 'myhost2', port: 8080 } ]
+				)
       end
 
       def es_search(conditions)
