@@ -13,6 +13,8 @@ And then execute:
 
 ```ruby
 
+# config/initializers/es_searchable.rb
+
 EsSearchable.configure do |config|
   config.logger = Logger.new("log/es_searchable.log")
   config.hosts = ["localhost:9200"]
