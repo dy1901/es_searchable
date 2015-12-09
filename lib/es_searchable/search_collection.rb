@@ -16,13 +16,12 @@ module EsSearchable
 			not: :must_not
 		}
 
+		Attrs = [:collections, :response, :count, :time]
+
 		# define method #and#, #or# and #not#
 		SearchName.each do |k, v|
 			define_method k do |params|
-				arr = parse_params(params)
-
-				set_filters(arr.first, v)
-				set_queries(arr.last, v)
+				set_filters(parse_params(params), v)
 				self.clone
 			end
 		end
@@ -31,14 +30,16 @@ module EsSearchable
 		alias_method :es_and, :and
 
 		def like(params)
-			store_conditions :query, :must, params.map { |k, v|
-				if v.is_a?(Hash)
-					{ match: { k => v.map {|_k, _v| { operator: _k, query: _v}}.first }}
-				else
-					{ match: { k => v }}
-				end
-			}
+			store_conditions :query, :must, params.map { |k, v| parse_like_params(k, v) }
 			self.clone
+		end
+
+		def parse_like_params(key, value)
+			if value.is_a?(Hash)
+				{ match: { key => value.map {|k, v| { operator: k, query: v}}.first }}
+			else
+				{ match: { key => value }}
+			end
 		end
 
 		def select(*attrs)
@@ -60,7 +61,14 @@ module EsSearchable
 			alias_method "es_#{meth}", meth
 		end
 
-		attr_reader :collections, :response, :count, :time
+		attr_reader *Attrs
+
+		Attrs.each do |attr|
+			define_method attr do
+				instance_variable_get("@#{attr}").nil? and load_data
+				instance_variable_get("@#{attr}")
+			end
+		end
 
 		def load
 			load_data
@@ -120,23 +128,25 @@ module EsSearchable
 		end
 
 		def parse_params(params)
-			filters, queries = [], []
+			[].tap do |filters|
+				params.each do |k, v|
+					case v
+					when Array
+						filters << { terms: { k => v } }
+					when Hash
+						if SearchName.include?(k)
+							filters << { bool: { SearchName[k.to_sym] => parse_params(v) } }
+						else
+							v[:like].present? and filters << { query: parse_like_params(k, v[:like]) }
 
-			params.each do |k, v|
-				case v
-				when Array
-					filters << { terms: { k => v } }
-				when Hash
-					v[:like].present? and queries << { match: {k => v.delete(:like)} }
-
-					v.slice!(:lte, :gte, :lt, :gt)
-					v.present? and filters << { range: { k => v } }
-				else 
-					filters << { term: { k => v } }
+							v.slice!(:lte, :gte, :lt, :gt)
+							v.present? and filters << { range: { k => v } }
+						end
+					else 
+						filters << { term: { k => v } }
+					end
 				end
 			end
-
-			[filters, queries]
 		end
 
 		def method_missing(meth, *args, &blk)

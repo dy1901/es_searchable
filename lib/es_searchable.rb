@@ -51,7 +51,7 @@ module EsSearchable
       end
 
 			def handle_es_response(es_coll)
-				es_coll.response
+				es_coll
 			end
 
       def client
