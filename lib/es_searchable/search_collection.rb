@@ -1,4 +1,7 @@
 require 'es_searchable'
+require 'elasticsearch/rails'
+require 'elasticsearch/model'
+require 'elasticsearch-api'
 
 module EsSearchable
 	class SearchCollection
@@ -28,7 +31,13 @@ module EsSearchable
 		alias_method :es_and, :and
 
 		def like(params)
-			store_conditions(:query, :must, params.map { |k, v| {match: { k => v }} })
+			store_conditions :query, :must, params.map { |k, v|
+				if v.is_a?(Hash)
+					{ match: { k => v.map {|_k, _v| { operator: _k, query: _v}}.first }}
+				else
+					{ match: { k => v }}
+				end
+			}
 			self.clone
 		end
 
@@ -70,12 +79,6 @@ module EsSearchable
 		  self.load.collections.map(&block)
 		end
 
-		def inspect
-			self.load unless @response
-			ap @collections if defined?(ap)
-			super
-		end
-
 		def search_params
 			conditions
 		end
@@ -84,13 +87,12 @@ module EsSearchable
 
 		def load_data
 			@response = @klass.es_search(conditions)
-			if @response.is_a?(Hash)
-				@time = @response["took"]
-				@count = @response["hits"]["total"]
+			@response = @response.response if @response.respond_to?(:response)
+			@time = @response["took"]
+			@count = @response["hits"]["total"]
 
-				@collections = @response["hits"]["hits"].map do |i| 
-					i[conditions[:fields].present? ? "fields" : "_source"]
-				end
+			@collections = @response["hits"]["hits"].map do |i| 
+				i[conditions[:fields].present? ? "fields" : "_source"]
 			end
 			@response
 		end

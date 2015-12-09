@@ -1,4 +1,5 @@
 require "es_searchable/version"
+require "awesome_print"
 
 module EsSearchable
   extend ActiveSupport::Concern

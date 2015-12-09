@@ -18,9 +18,10 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_development_dependency "bundler", "~> 1.6"
-	spec.add_development_dependency "rake"
-	spec.add_development_dependency "elasticsearch"
-	spec.add_development_dependency "elasticsearch-rails", "~> 0.1.7"
-	spec.add_development_dependency "elasticsearch-model", "~> 0.1.8"
+  spec.add_dependency "bundler", "~> 1.6"
+	spec.add_dependency "rake"
+	spec.add_dependency "awesome_print"
+	spec.add_dependency "elasticsearch"
+	spec.add_dependency "elasticsearch-rails", "~> 0.1.7"
+	spec.add_dependency "elasticsearch-model", "~> 0.1.8"
 end
