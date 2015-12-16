@@ -1,7 +1,7 @@
+require "awesome_print"
 require "es_searchable/version"
 require "es_searchable/configurable"
 require "es_searchable/indexer_creator"
-require "awesome_print"
 
 module EsSearchable
 	extend Configurable
@@ -19,7 +19,9 @@ module EsSearchable
 				cattr_accessor :indexer, :indexed_attributes, :attribute_blacklist
 
 				self.indexer = IndexerCreator.create(self)
-				self.attribute_blacklist = %w(hashed_password encrypted_password reset_password_token reset_password_sent_at remember_created_at)
+				self.attribute_blacklist = %w(
+					hashed_password encrypted_password reset_password_token
+				)
 
 				after_save do
 					should_perform_index? and indexer.perform_async(
