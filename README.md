@@ -3,7 +3,7 @@ es_searchable implemented an ActiveRecord like search api for Elasticsearch.
 
 ## Install 
 
-`gem 'es_searchable', git: 'git@github.com:rongchain/es_searchable.git'`
+`gem 'es_searchable', git: 'git@github.com:rongchain/es_searchable.git', tag: 'v0.0.6'`
 
 And then execute: 
 
