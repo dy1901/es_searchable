@@ -42,7 +42,7 @@ module EsSearchable
 
 	def should_perform_index?
 		self.class.indexed_attributes ||=
-			self.class.mapping.to_hash[:user][:properties].keys
+			self.class.mapping.to_hash[self.class.name.underscore.to_sym][:properties].keys
 		(self.class.indexed_attributes & self.changed.map(&:to_sym)).present?
 	end
 
