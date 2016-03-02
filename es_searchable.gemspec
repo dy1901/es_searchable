@@ -26,4 +26,5 @@ Gem::Specification.new do |spec|
 	spec.add_dependency "elasticsearch-model", "~> 0.1.8"
 	spec.add_dependency "sidekiq"
   spec.add_development_dependency "sqlite3"
+  spec.add_development_dependency "rails"
 end
