@@ -91,6 +91,10 @@ module EsSearchable
 			conditions
 		end
 
+		def ==(coll)
+			self.search_params == coll.search_params
+		end
+
 		private
 
 		def load_data
