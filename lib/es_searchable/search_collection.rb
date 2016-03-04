@@ -163,8 +163,14 @@ module EsSearchable
 				store_conditions(:filter, :must, conds)
 				return self.clone
 			when /(.*)_like/
-				conds = [{ match: { $1 => args.first } }]
-				store_conditions(:query, :must, conds)
+				if args.length == 1
+					conds = [{ match: { $1 => args.first } }]
+					store_conditions(:query, :must, conds)
+				elsif args.length == 2 && %w(and or).include?(args.last.to_s)
+					conds = [{ match: { $1 => { operator: args.last, query: args.first } } }]
+					store_conditions(:query, :must, conds)
+				else
+				end
 				return self.clone
 			else
 				super

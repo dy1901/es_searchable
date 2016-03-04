@@ -446,4 +446,29 @@ class SearchCollectionTest < ActiveSupport::TestCase
 			}
 		}]
 	end
+
+	test "#(.*)_gt|lt|gte|lte" do
+		assert_call @coll, :store_conditions, :filter, :must, [{ range: { 'id' => { gt: 10 } } }] do
+		  @coll.id_gt(10)
+		end
+
+		assert_equal @coll.es_where(id: {gt: 10}), @coll.id_gt(10)
+	end
+
+	test "#(.*)_between" do
+		assert_call @coll, :store_conditions, :filter, :must, [{ range: { 'id' => { gte: 10, lte: 20 } } }] do
+		  @coll.id_between(10, 20)
+		end
+
+		assert_equal @coll.es_where(id: {gte: 10, lte: 20}), @coll.id_between(10, 20)
+	end
+
+	test "#(.*)_like" do
+		assert_call @coll, :store_conditions, :query, :must, [match: { 'name' => 'foo' }] do
+			@coll.name_like('foo')
+		end
+
+		assert_equal @coll.es_like(name: 'foo'), @coll.name_like('foo')
+		assert_equal @coll.es_like(name: { or: 'foo' }), @coll.name_like('foo', :or)
+	end
 end
