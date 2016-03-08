@@ -103,7 +103,13 @@ module EsSearchable
 			@count = @response["hits"]["total"]
 
 			@collections = @response["hits"]["hits"].map do |i| 
-				i[conditions[:fields].present? ? "fields" : "_source"]
+				if self.search_params[:fields].blank?
+					i['_source']
+				else
+					{}.tap do |hash|
+						i['fields'].each { |k, v| hash[k] = (v.length == 1 ? v.first : v) }
+					end
+				end
 			end
 			@response
 		end
