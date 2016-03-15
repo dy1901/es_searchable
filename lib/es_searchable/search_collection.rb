@@ -109,7 +109,9 @@ module EsSearchable
 					i['_source']
 				else
 					{}.tap do |hash|
-						i['fields'].each { |k, v| hash[k] = (v.length == 1 ? v.first : v) }
+						i['fields'].each do |k, v|
+							hash[k] = [v].flatten.first
+						end
 					end
 				end
 			end
