@@ -1,4 +1,3 @@
-require "awesome_print"
 require "es_searchable/version"
 require "es_searchable/configurable"
 
