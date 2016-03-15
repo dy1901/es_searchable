@@ -11,7 +11,7 @@ module EsSearchable
 				queue: 'elasticsearch',
 				reload_on_failure: true, 
 				hosts: ['localhost:9200'], 
-				logger: Logger.new($stdout),
+				logger: defined?(Rails) ? Logger.new($stdout) : nil,
 			}
 				
 			base.class_eval do
