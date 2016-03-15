@@ -267,3 +267,11 @@ User.es_where({}).select(:id).limit(3).load.collections
 
 User.es_where({}).select(:id).limit(3).offset(2).load.collections
  => [{"id"=>3}, {"id"=>4}, {"id"=>5}]
+```
+
+### *_like, *_between, *_gt, *_lt, *_gte, *_lte
+```ruby
+User.name_like('test')   <=>    User.like(name: 'test')
+User.id_lte(10)          <=>    User.lte(id: 10)
+User.id_between(1,3)     <=>    User.where(id: {gte: 1, lte: 2})
+```
