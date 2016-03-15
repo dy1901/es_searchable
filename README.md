@@ -5,6 +5,10 @@ es_searchable implemented an ActiveRecord like search api for Elasticsearch.
 
 `gem 'es_searchable', git: 'git@github.com:rongchain/es_searchable.git'`
 
+or
+
+`gem install es_searchable`
+
 And then execute: 
 
 `bundle`
