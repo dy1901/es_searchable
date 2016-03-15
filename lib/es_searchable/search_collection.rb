@@ -95,6 +95,8 @@ module EsSearchable
 			self.search_params == coll.search_params
 		end
 
+		delegate :first, :last, :[], :length, to: :collections
+
 		private
 
 		def load_data

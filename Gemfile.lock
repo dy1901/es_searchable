@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    es_searchable (0.0.7)
+    es_searchable (0.1.0)
       bundler (~> 1.6)
       elasticsearch
       elasticsearch-model (~> 0.1.8)
