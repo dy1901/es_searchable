@@ -1,12 +1,13 @@
 require 'test_helper'
 
-class SearchCollectionTest < ActiveSupport::TestCase
-	setup	do
-	  class Foo
-			include EsSearchable
-		end
+class Foo
+	include EsSearchable
+end
 
+class SearchCollectionTest < ActiveSupport::TestCase
+	def setup
 		@coll = EsSearchable::SearchCollection.new(Foo)
+
 		@full_response = {
 			"took"=>1,
 			"timed_out"=>false,

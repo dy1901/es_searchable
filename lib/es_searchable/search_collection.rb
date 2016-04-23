@@ -1,13 +1,12 @@
-require 'es_searchable'
-require 'elasticsearch/rails'
-require 'elasticsearch/model'
-require 'elasticsearch-api'
+require 'elasticsearch'
 
 module EsSearchable
 	class SearchCollection
+		extend Forwardable
 
 		def initialize(klass)
 			@klass = klass
+			@time, @response, @count, @collections = nil, nil, nil, nil
 		end
 
 		SearchName = {
@@ -95,7 +94,7 @@ module EsSearchable
 			self.search_params == coll.search_params
 		end
 
-		delegate :first, :last, :[], :length, to: :collections
+		def_delegators :@collections, :first, :last, :[], :length
 
 		private
 

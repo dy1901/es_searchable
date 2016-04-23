@@ -1,3 +1,4 @@
+require "active_support/concern"
 require "es_searchable/version"
 require "es_searchable/configurable"
 
@@ -7,13 +8,16 @@ module EsSearchable
 
 	included do
     class << self
-			delegate *SearchMethods, to: :es_collection, prefix: :es
+			extend Forwardable
+			SearchMethods.each do |meth|
+				def_delegator :es_collection, meth, "es_#{meth}"
+			end
 		end
 	end
 
 	module ClassMethods
 		def es_collection
-			SearchCollection.new(self)
+			@es_collection = SearchCollection.new(self)
 		end
 
 		def handle_es_response(es_coll)
