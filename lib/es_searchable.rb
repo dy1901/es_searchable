@@ -1,4 +1,4 @@
-require "active_support/concern"
+require "active_support/all"
 require "es_searchable/version"
 require "es_searchable/configurable"
 
