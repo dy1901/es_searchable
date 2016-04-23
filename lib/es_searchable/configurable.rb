@@ -1,3 +1,5 @@
+require 'logger'
+
 module EsSearchable
 	module Configurable
 		def self.extended(base)
@@ -10,8 +12,8 @@ module EsSearchable
 				async_callback: true,
 				queue: 'elasticsearch',
 				reload_on_failure: true, 
-				hosts: ['localhost:9200'], 
-				logger: defined?(Rails) ? Logger.new($stdout) : nil,
+				hosts: ['localhost:9200'],
+				logger: Logger.new($stdout)
 			}
 				
 			base.class_eval do
